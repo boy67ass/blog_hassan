@@ -12,21 +12,31 @@
 
     // --- MODIFIED IP LOOKUP FUNCTION (CORS FIX) ---
 // --- CORRECTED IP LOOKUP FUNCTION ---
+// --- BULLETPROOF IP LOOKUP FUNCTION ---
 async function getIpData() {
-    // Using ipify's CORS-enabled endpoint. It's more reliable than JSONP.
-    try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // ipify only gives the IP, so we'll get the rest from ipapi.co using the IP we just found.
-        const ipData = await response.json();
-        const fullIpData = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
-        return await fullIpData.json();
-    } catch (error) {
-        console.error("Failed to fetch IP data:", error);
-        return null; // Return null if it fails, so the script doesn't crash
-    }
+    // This uses a simple, reliable JSONP call to ipapi.co.
+    // It's the most robust way to get IP data from a browser.
+    return new Promise((resolve) => {
+        // Define the callback function globally
+        window.ipapiCallback = (data) => {
+            resolve(data);
+            // Clean up the script tag and callback function
+            delete window.ipapiCallback;
+            document.body.removeChild(scriptElement);
+        };
+
+        // Create the script element
+        const scriptElement = document.createElement('script');
+        scriptElement.src = 'https://ipapi.co/json/?callback=ipapiCallback';
+        scriptElement.onerror = () => {
+            console.error("IPAPI script failed to load.");
+            resolve(null); // Resolve with null on error
+            delete window.ipapiCallback;
+        };
+
+        // Add it to the page to trigger the request
+        document.body.appendChild(scriptElement);
+    });
 }
 
     async function getAdvancedFingerprint() {

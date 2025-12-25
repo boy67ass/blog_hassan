@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hassan Aziz - MLS Next Soccer Player Blog</title>
+    <style>
+        /* --- Basic Reset & Typography --- */
+        :root {
+            --primary-color: #006A4E; /* A deep soccer green */
+            --secondary-color: #D4AF37; /* A gold accent */
+            --text-color: #333;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --header-font: 'Arial Black', sans-serif;
+            --body-font: 'Verdana', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--body-font);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Header --- */
+        header {
+            background: linear-gradient(to right, var(--primary-color), #004d36);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--header-font);
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* --- Blog Posts --- */
+        .posts {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .post-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .post-content {
+            padding: 20px;
+        }
+
+        .post-content h2 {
+            margin-top: 0;
+            font-family: var(--header-font);
+            color: var(--primary-color);
+        }
+
+        .post-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .post-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .sidebar-widget {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-widget h3 {
+            margin-top: 0;
+            font-family: var(--header-font);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .sidebar-widget ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-widget ul li {
+            margin-bottom: 10px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            color: #777;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            header .container {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <a href="#" class="logo">Hassan Aziz</a>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">My Journey</a></li>
+                    <li><a href="#">Field Notes</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <main class="main-content">
+            <section class="posts">
+                <!-- THIS IS THE LINK TO YOUR LOGGER PAGE -->
+                <article class="post-card">
+                    <img src="https://images.unsplash.com/photo-1517466787929-bc90951f0974?q=80&w=1974&auto=format&fit=crop" alt="Soccer player training">
+                    <div class="post-content">
+                        <h2>My Path to the MLS Next Pro</h2>
+                        <p>Every dream starts with a single step. For me, that step was on a dusty field in my hometown. This post is about the long road, the early morning training sessions, the sacrifices, and the unwavering focus it takes to chase the dream of becoming a professional soccer player in the MLS.</p>
+                        <a href="log.html">Read My Story &rarr;</a>
+                    </div>
+                </article>
+
+                <article class="post-card">
+                    <img src="https://images.unsplash.com/photo-1574629828222-3c855c9e972c?q=80&w=1974&auto=format&fit=crop" alt="Soccer cleats and a ball">
+                    <div class="post-content">
+                        <h2>Gear Talk: My Favorite Cleats for the Season</h2>
+                        <p>The right pair of cleats can make all the difference on the pitch. I'm breaking down my current go-to gear, from the boots that give me the best touch to the training tools that keep me sharp. If you're looking to upgrade your kit, you won't want to miss this.</p>
+                        <a href="#">Check Out the Gear &rarr;</a>
+                    </div>
+                </article>
+
+                <article class="post-card">
+                    <img src="https://images.unsplash.com/photo-1508098682722-e99c43a7f529?q=80&w=2070&auto=format&fit=crop" alt="Soccer game on a field">
+                    <div class="post-content">
+                        <h2>Breaking Down Last Week's Game</h2>
+                        <p>We had a tough match last Friday, and there were a lot of lessons learned. I'm doing a deep dive into the key plays, my personal performance, and what we're working on in training to come back stronger next time. It's all about growth.</p>
+                        <a href="#">Get the Analysis &rarr;</a>
+                    </div>
+                </article>
+            </section>
+
+            <aside class="sidebar">
+                <div class="sidebar-widget">
+                    <h3>About Me</h3>
+                    <p>My name is Hassan Aziz. I'm a young, dedicated soccer player with one goal: to play at the highest level. This blog is my personal journal where I share my journey, my workouts, and my thoughts on the beautiful game.</p>
+                </div>
+
+                <div class="sidebar-widget">
+                    <h3>Recent Posts</h3>
+                    <ul>
+                        <li><a href="#">My Path to the MLS Next Pro</a></li>
+                        <li><a href="#">Gear Talk: My Favorite Cleats</a></li>
+                        <li><a href="#">Breaking Down Last Week's Game</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-widget">
+                    <h3>Follow My Journey</h3>
+                    <p>Connect with me on social media for daily updates and behind-the-scenes content from the pitch and the training ground.</p>
+                    <!-- Add social media links here if you want -->
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <

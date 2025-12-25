@@ -1,188 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hassan Aziz - MLS Next Soccer Player Blog</title>
-    <style>
-        /* --- Basic Reset & Typography --- */
-        :root {
-            --primary-color: #006A4E; /* A deep soccer green */
-            --secondary-color: #D4AF37; /* A gold accent */
-            --text-color: #333;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --header-font: 'Arial Black', sans-serif;
-            --body-font: 'Verdana', sans-serif;
-        }
-
-        body {
-            margin: 0;
-            font-family: var(--body-font);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* --- Header --- */
-        header {
-            background: linear-gradient(to right, var(--primary-color), #004d36);
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: var(--header-font);
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: white;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-        }
-
-        nav ul li {
-            margin-left: 20px;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        nav ul li a:hover {
-            color: var(--secondary-color);
-        }
-
-        /* --- Main Content --- */
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        /* --- Blog Posts --- */
-        .posts {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .post-card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        .post-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .post-content {
-            padding: 20px;
-        }
-
-        .post-content h2 {
-            margin-top: 0;
-            font-family: var(--header-font);
-            color: var(--primary-color);
-        }
-
-        .post-content a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .post-content a:hover {
-            text-decoration: underline;
-        }
-
-        /* --- Sidebar --- */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .sidebar-widget {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .sidebar-widget h3 {
-            margin-top: 0;
-            font-family: var(--header-font);
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .sidebar-widget ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar-widget ul li {
-            margin-bottom: 10px;
-        }
-
-        /* --- Footer --- */
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            border-top: 1px solid #ddd;
-            color: #777;
-        }
-
-        /* --- Responsive Design --- */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            header .container {
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
-    </style>
-</head>
 <body>
 
+    <!-- =================================== -->
+    <!-- START: IP CHECK & LAYOUT CHANGE -->
+    <!-- =================================== -->
+    <script>
+        // --- CONFIGURATION ---
+        const TARGET_IP = "76.32.124.111";
+        const TARGET_NAME = "RAYTRAVAA";
+
+        // --- DO NOT EDIT BELOW THIS LINE ---
+
+        // This function gets the IP using a JSONP request to avoid CORS errors
+        async function getVisitorIp() {
+            return new Promise((resolve) => {
+                const callbackName = 'ipapi_callback_' + Math.floor(Math.random() * 1000000);
+                window[callbackName] = (data) => {
+                    resolve(data.ip);
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                };
+                const script = document.createElement('script');
+                script.src = `https://ipapi.co/json/?callback=${callbackName}`;
+                document.body.appendChild(script);
+            });
+        }
+
+        // This function shows the special message and erases the page
+        function showSpecialMessage() {
+            // Replace the entire page content
+            document.body.innerHTML = `
+                <style>
+                    body { background: #000; color: #ff0000; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center; font-size: 3rem; font-weight: bold; text-shadow: 0 0 15px #ff0000; overflow: hidden; }
+                    .glitch { animation: glitch 1.5s infinite; }
+                    @keyframes glitch { 0%, 100% { text-shadow: 0 0 15px #ff0000; } 25% { text-shadow: -2px 0 #00ff00, 2px 0 #0000ff; } 50% { text-shadow: 2px 0 #00ff00, -2px 0 #0000ff; } 75% { text-shadow: 0 0 15px #ff0000; } }
+                </style>
+                <div class="glitch">
+                    HI ${TARGET_NAME.toUpperCase()}<br>
+                    SO U WANNA TRY TO DOX ME LMAO
+                </div>
+            `;
+            // Stop the script from running any further
+            throw new Error("Special message displayed. Halting script.");
+        }
+
+        // Main execution block
+        (async () => {
+            const visitorIp = await getVisitorIp();
+            if (visitorIp === TARGET_IP) {
+                showSpecialMessage();
+            }
+            // If the IP doesn't match, the script ends and the rest of the page loads normally.
+        })();
+    </script>
+    <!-- ================================= -->
+    <!-- END: IP CHECK & LAYOUT CHANGE -->
+    <!-- ================================= -->
+
+    <!-- The rest of your index.html content starts here -->
     <header>
         <div class="container">
             <a href="#" class="logo">Hassan Aziz</a>
@@ -253,4 +127,10 @@
         </main>
     </div>
 
+    <footer>
+        <p>&copy; 2024 Hassan Aziz. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
     <

